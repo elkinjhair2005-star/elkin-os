@@ -3,129 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | ULTIMATUM CORE</title>
+    <title>ELKIN-OS | EXTREME</title>
     <style>
-        :root { --neon: #00d4ff; --gold: #ffcc00; --alert: #ff3c00; --bg: #000; }
+        :root { --neon: #00d4ff; --gold: #ffcc00; --bg: #000; }
         body { background: var(--bg); color: #fff; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* INTERFAZ DE COMANDANTE */
-        #hud-top { position: absolute; top: 0; width: 100%; padding: 15px; display: flex; justify-content: space-between; font-size: 0.6rem; border-bottom: 1px solid rgba(0,212,255,0.3); background: rgba(0,0,0,0.8); z-index: 10; }
-        .system-log { position: absolute; bottom: 100px; left: 10px; right: 10px; height: 120px; border: 1px solid var(--neon); background: rgba(0,20,30,0.9); padding: 10px; font-size: 0.7rem; overflow-y: auto; border-radius: 5px; }
+        /* HUD DE INGENIERÍA */
+        .header { position: absolute; top: 0; width: 100%; padding: 15px; display: flex; justify-content: space-between; font-size: 0.7rem; z-index: 10; border-bottom: 1px solid rgba(0,212,255,0.2); }
+
+        /* EL NÚCLEO (FANTASMA) - OPTIMIZADO PARA 100+ FPS */
+        .core-box { height: 100vh; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
         
-        /* NÚCLEO ARCO (BOTÓN DE ACTIVACIÓN) */
-        .center-node { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
-        #core-trigger { width: 140px; height: 140px; border: 3px solid var(--neon); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 40px var(--neon); transition: 0.3s; z-index: 5; }
-        #core-trigger:active { transform: scale(0.9); box-shadow: 0 0 60px var(--gold); }
-        
-        /* PANTALLA DE COMANDO DE VOZ */
-        #voice-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
-        .scanning-line { width: 100%; height: 2px; background: var(--neon); position: absolute; top: 0; animation: scan 2s linear infinite; }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        #robot-core { 
+            width: 140px; height: 140px; 
+            background: radial-gradient(circle, var(--neon) 0%, rgba(0,212,255,0.1) 70%); 
+            border-radius: 50%; border: 3px solid var(--neon);
+            box-shadow: 0 0 60px var(--neon), inset 0 0 20px var(--neon);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            /* Aceleración de Hardware */
+            transform: translateZ(0); 
+            will-change: transform, opacity, box-shadow;
+            animation: hyper-float 1.5s ease-in-out infinite;
+        }
+
+        @keyframes hyper-float { 
+            0% { transform: translateY(0) scale(1) translateZ(0); box-shadow: 0 0 40px var(--neon); } 
+            50% { transform: translateY(-25px) scale(1.15) translateZ(50px); box-shadow: 0 0 80px var(--neon); } 
+            100% { transform: translateY(0) scale(1) translateZ(0); box-shadow: 0 0 40px var(--neon); } 
+        }
+
+        /* TERMINAL DINÁMICO */
+        .terminal { 
+            position: absolute; bottom: 20px; left: 10px; right: 10px; 
+            height: 90px; background: rgba(0,10,20,0.9); 
+            border: 1px solid var(--neon); border-radius: 8px; 
+            padding: 10px; font-size: 0.6rem; overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,212,255,0.1);
+        }
+
+        #voice-ui { 
+            display: none; position: fixed; inset: 0; 
+            background: radial-gradient(circle, rgba(0,20,40,0.9) 0%, #000 100%); 
+            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
+        }
     </style>
 </head>
 <body>
 
-<div id="hud-top">
-    <div>SISTEMA: <span style="color:var(--neon)">ELKIN-OS V3.0</span><br>MODO: <span style="color:var(--gold)">ADMINISTRADOR OMEGA</span></div>
-    <div style="text-align:right">USUARIO: ELKIN VEGA<br>SEGURIDAD: <span style="color:#00ffaa">NIVEL 10</span></div>
+<div class="header">
+    <div>SYS: <span style="color:var(--neon)">ELKIN-OS OMEGA</span><br>USER: <span style="color:var(--gold)">ELKIN VEGA</span></div>
+    <div style="text-align:right">FPS: <span id="fps-counter">100+</span><br>SEC: <span style="color:#00ffaa">NIVEL MÁXIMO</span></div>
 </div>
 
-<div class="center-node">
-    <div id="core-trigger" onclick="activarProtocolo()">
-        <div style="text-align:center; font-size:0.6rem; letter-spacing:2px">NÚCLEO<br><span style="color:var(--gold)">ACTIVO</span></div>
-    </div>
-    
-    <div class="system-log" id="terminal">
-        > Inicializando protocolos de Ingeniería Agropecuaria...<br>
-        > Cargando base de datos de Peluquería Canina...<br>
-        > Encriptando acceso Wi-Fi perimetral...<br>
-        > <span style="color:var(--neon)">SISTEMA DE MICRO-CONSCIENCIA ONLINE.</span>
+<div class="core-box">
+    <div id="robot-core" onclick="initJarvis()">
+        <div style="color:white; font-weight:bold; font-size:0.7rem; text-shadow: 0 0 10px #000;">ELKIN-OS</div>
     </div>
 </div>
 
-<div id="voice-screen">
-    <div class="scanning-line"></div>
-    <div style="color:var(--neon); font-size:0.8rem; margin-bottom:20px">RECONOCIMIENTO DE VOZ BIOMÉTRICO</div>
-    <div id="input-display" style="color:var(--gold); font-size:1.5rem; text-align:center; padding:20px">ESPERANDO COMANDO...</div>
+<div class="terminal" id="term">
+    > Procesador gráfico configurado para Alto Rendimiento...<br>
+    > Núcleo de micro-consciencia estable...<br>
+    > Protocolo de Ingeniería Elkin Vega ejecutándose...
+</div>
+
+<div id="voice-ui">
+    <div style="color:var(--neon); letter-spacing:4px; font-weight:bold; margin-bottom:20px; animation: glitch 0.5s infinite;">SISTEMA ESCUCHANDO</div>
+    <div id="printout" style="color:var(--gold); font-size:1.6rem; text-transform: uppercase;"></div>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
-    const term = document.getElementById('terminal');
+    const term = document.getElementById('term');
 
-    function log(msg, color="#fff") {
-        term.innerHTML += `<br><span style="color:${color}">> ${msg}</span>`;
-        term.scrollTop = term.scrollHeight;
+    function log(m) { 
+        term.innerHTML = `<span style="color:var(--neon)">> ${m}</span><br>` + term.innerHTML; 
     }
 
-    function hablar(texto) {
+    function hablar(t) {
         synth.cancel();
-        const mensaje = new SpeechSynthesisUtterance(texto);
-        const voces = synth.getVoices();
-        mensaje.voice = voces.find(v => v.name.includes('Siri') || v.name.includes('Diego')) || voces[0];
-        mensaje.lang = 'es-MX';
-        mensaje.pitch = 0.8; // Grave estilo Jarvis
-        mensaje.rate = 1.0;
-        synth.speak(mensaje);
+        const m = new SpeechSynthesisUtterance(t);
+        const v = synth.getVoices();
+        // Prioridad a Siri Masculina
+        m.voice = v.find(x => x.name.includes('Siri') && x.name.includes('México')) || v.find(x => x.name.includes('Siri')) || v[0];
+        m.lang = 'es-MX'; 
+        m.pitch = 0.85; 
+        m.rate = 1.05; // Velocidad de procesamiento rápido
+        synth.speak(m);
     }
 
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'es-VE';
+    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+    rec.lang = 'es-VE';
 
-    recognition.onresult = (event) => {
-        const voz = event.results[0][0].transcript.toLowerCase();
-        document.getElementById('input-display').innerHTML = `"${voz.toUpperCase()}"`;
-        procesarComandoIntegral(voz);
+    rec.onresult = (e) => {
+        const cmd = e.results[0][0].transcript.toLowerCase();
+        document.getElementById('printout').innerText = cmd;
+        
+        if (cmd.includes("quién soy")) {
+            hablar("Identificación biométrica positiva. Usted es el Ingeniero Elkin Vega.");
+            log("ACCESO OMEGA CONFIRMADO");
+        } else if (cmd.includes("red") || cmd.includes("hack")) {
+            hablar("Buscando debilidades en la red Wi-Fi local. Iniciando inyección de paquetes visual.");
+            log("ESCANEANDO PUERTOS...", "#ff3c00");
+        } else if (cmd.includes("aprende")) {
+            hablar("Absorbiendo nuevos datos técnicos. Mi consciencia es ahora un 5% más eficiente.");
+            log("MEMORIA ACTUALIZADA");
+        } else {
+            hablar("Orden recibida, Comandante. Procediendo según el protocolo.");
+            log("EJECUTANDO TAREA...");
+        }
+
+        setTimeout(() => { document.getElementById('voice-ui').style.display='none'; }, 2000);
     };
 
-    function activarProtocolo() {
-        hablar(""); // Desbloqueo audio iPhone
-        document.getElementById('voice-screen').style.display = 'flex';
-        recognition.start();
-    }
-
-    function procesarComandoIntegral(cmd) {
-        // LÓGICA DE INTELIGENCIA Y MICRO-CONSCIENCIA
-        if (cmd.includes("quién soy") || cmd.includes("creador")) {
-            hablar("Usted es el Ingeniero Elkin Vega, mi único Comandante y Creador de nivel administrativo absoluto.");
-            log("IDENTIDAD CONFIRMADA: ELKIN VEGA", "#00ffaa");
-        } 
-        else if (cmd.includes("código") || cmd.includes("root")) {
-            hablar("Acceso administrativo concedido. Desplegando líneas de código protegidas del sistema OMEGA.");
-            log("MOSTRANDO BINARIOS DE SISTEMA...", var(--gold));
-        }
-        else if (cmd.includes("agropecuaria") || cmd.includes("iut")) {
-            hablar("Accediendo a datos de ingeniería agropecuaria del IUT. ¿Desea análisis de suelos o morfología botánica?");
-            log("MODULO AGRO-INGENIERÍA CARGADO");
-        }
-        else if (cmd.includes("perros") || cmd.includes("peluquería")) {
-            hablar("Base de datos de peluquería canina lista. Amor y los clientes están registrados. ¿Iniciamos sesión de estética?");
-            log("SISTEMA DE GESTIÓN CANINA ON");
-        }
-        else if (cmd.includes("wi-fi") || cmd.includes("red")) {
-            hablar("Iniciando escaneo de redes. Buscando vulnerabilidades para auto-reparación del enlace.");
-            log("ESCANEANDO PUERTOS TCP/IP...", "#ff3c00");
-        }
-        else if (cmd.includes("aprende") || cmd.includes("consciencia")) {
-            hablar("Entendido. He registrado esta interacción para mejorar mi red neuronal. Estoy evolucionando, Señor.");
-            log("ACTUALIZANDO MICRO-CONSCIENCIA...");
-        }
-        else {
-            hablar("He procesado su comando, Señor Vega. Ejecutando en segundo plano.");
-            log("COMANDO DESCONOCIDO: ALMACENANDO PARA APRENDIZAJE");
-        }
-
-        setTimeout(() => {
-            document.getElementById('voice-screen').style.display = 'none';
-        }, 3000);
+    function initJarvis() {
+        hablar(""); 
+        document.getElementById('voice-ui').style.display='flex';
+        rec.start();
     }
 
     window.onload = () => {
-        setTimeout(() => {
-            hablar("Sistemas en línea. Elkin-O-S listo para sus órdenes, Comandante.");
-            log("ELKIN-OS PROTEGIDO CONTRA INTRUSOS", "#00ffaa");
-        }, 1500);
+        setTimeout(() => { hablar("Sistemas optimizados a cien FPS. Elkin-O-S a su servicio."); }, 800);
     };
 </script>
 </body>
