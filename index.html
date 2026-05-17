@@ -3,82 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | FINAL OMEGA</title>
+    <title>ELKIN-OS | CORE RECOVERY</title>
     <style>
-        body { background: #000; color: #ffd700; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        
+        body { 
+            background: #000; 
+            color: #ffd700; 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            height: 100vh; 
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* HUD SUPERIOR */
-        .hud { padding: 20px; display: flex; justify-content: space-between; font-size: 0.7rem; letter-spacing: 2px; border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
-
-        /* NÚCLEO VECTORIAL (INDSTRUCTIBLE) */
-        .core-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        
-        #nucleus-svg {
-            width: 280px; height: 280px;
-            cursor: pointer;
-            filter: drop-shadow(0 0 15px #ffd700);
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            letter-spacing: 2px;
+            font-weight: bold;
         }
 
-        .orbit { 
-            fill: none; stroke: #ffd700; stroke-width: 1.5; 
-            transform-origin: center; 
-            animation: spin var(--d) linear infinite; 
+        /* EL CONTENEDOR MAESTRO (FORZADO) */
+        .core-wrapper {
+            flex-grow: 1; /* Esto obliga a que use todo el espacio negro del medio */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* LA ESFERA DORADA STARK */
+        .stark-sphere {
+            width: 200px;
+            height: 200px;
+            border: 4px double #ffd700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: pulse 1.5s infinite ease-in-out;
+            position: relative;
+        }
 
-        /* TERMINAL DE DATOS */
-        .terminal { 
-            margin: 20px; padding: 15px; background: rgba(0,20,30,0.9); 
-            border: 1px solid #00d4ff; font-size: 0.6rem; border-radius: 4px; color: #00d4ff;
+        /* Los anillos de datos que viste en la imagen de Jarvis */
+        .stark-sphere::after {
+            content: '';
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border: 1px dashed rgba(255, 215, 0, 0.4);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* TEXTO CENTRAL */
+        .core-text {
+            font-size: 14px;
+            letter-spacing: 5px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        /* TERMINAL INFERIOR */
+        .footer-terminal {
+            margin: 20px;
+            padding: 15px;
+            border: 1px solid #00d4ff;
+            background: rgba(0, 20, 30, 0.8);
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 9px;
+            color: #00d4ff;
         }
     </style>
 </head>
 <body>
 
-<div class="hud">
-    <div>SYS: ELKIN-OS v4.5<br>ADMIN: ELKIN VEGA</div>
-    <div style="text-align:right">IUT: AGRO-ENG<br>MODE: STARK CORE</div>
-</div>
+    <div class="header">
+        <div>SYSTEM: ELKIN-OS OMEGA V4.0<br>USER: ELKIN VEGA</div>
+        <div style="text-align:right">SEC: NIVEL MÁXIMO<br>CORE: HOLOGRÁFICO</div>
+    </div>
 
-<div class="core-container" onclick="hablarProtocolo()">
-    <svg id="nucleus-svg" viewBox="0 0 200 200">
-        <circle class="orbit" cx="100" cy="100" r="80" stroke-dasharray="10 20" style="--d: 15s"/>
-        <circle class="orbit" cx="100" cy="100" r="65" stroke-dasharray="5 5" style="--d: 8s; direction: reverse;"/>
-        <circle class="orbit" cx="100" cy="100" r="50" stroke-width="3" style="--d: 5s"/>
-        
-        <circle cx="100" cy="100" r="15" fill="#ffd700">
-            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
-        </circle>
-        
-        <text x="100" y="105" text-anchor="middle" fill="#000" font-size="6" font-weight="bold" font-family="Arial">OS</text>
-    </svg>
-</div>
+    <div class="core-wrapper" onclick="activar()">
+        <div class="stark-sphere">
+            <div class="core-text">ELKIN-OS</div>
+        </div>
+    </div>
 
-<div class="terminal">
-    > SISTEMA HOLOGRÁFICO RECONSTRUIDO CON VECTORES.<br>
-    > <span style="color:#ffd700">IDENTIDAD BIOMÉTRICA: ELKIN VEGA CONFIRMADA.</span><br>
-    > ESPERANDO ÓRDENES PARA INDAGAR...
-</div>
+    <div class="footer-terminal">
+        > NÚCLEO VECTORIAL REESTABLECIDO.<br>
+        > ERROR DE RENDERIZADO CORREGIDO.<br>
+        > <span style="color:#ffd700">LISTO PARA EL COMANDANTE VEGA.</span>
+    </div>
 
-<script>
-    const synth = window.speechSynthesis;
-    function hablar(t) {
-        synth.cancel();
-        const m = new SpeechSynthesisUtterance(t);
-        m.lang = 'es-MX'; 
-        m.pitch = 0.8; m.rate = 1.0;
-        synth.speak(m);
-    }
+    <script>
+        function hablar(t) {
+            window.speechSynthesis.cancel();
+            const m = new SpeechSynthesisUtterance(t);
+            m.lang = 'es-MX';
+            window.speechSynthesis.speak(m);
+        }
 
-    function hablarProtocolo() {
-        hablar("Comandante Vega, deje el pesimismo para la competencia. ELKIN-OS está operativo y listo para lo que usted mande.");
-        console.log("Sistema Activado");
-    }
+        function activar() {
+            hablar("Sistema restablecido. El núcleo dorado está operativo, Comandante.");
+            document.querySelector('.stark-sphere').style.borderColor = "#00ffaa";
+        }
 
-    window.onload = () => {
-        setTimeout(() => { hablar("Sistemas sincronizados. Bienvenido a casa, Señor."); }, 800);
-    };
-</script>
+        window.onload = () => {
+            setTimeout(() => { hablar("Sistemas en línea."); }, 500);
+        };
+    </script>
 </body>
 </html>
