@@ -14,102 +14,74 @@
         #hud-sec { bottom: 20%; left: 5%; border-color: #00ffaa; }
         #spirit { width: 180px; height: 180px; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); filter: blur(15px); border-radius: 50%; animation: pulse 4s infinite ease-in-out; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.9; } }
-        #comm-orb { position: absolute; bottom: 40px; width: 90px; height: 90px; background: radial-gradient(circle, #fff, var(--neon)); border-radius: 50%; box-shadow: 0 0 50px var(--neon); cursor: pointer; z-index: 1000; transition: 0.3s; }
-        #comm-orb:active { transform: scale(0.9); filter: brightness(1.5); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 30px; box-sizing: border-box; text-align: center; }
+        #comm-orb { position: absolute; bottom: 40px; width: 90px; height: 90px; background: radial-gradient(circle, #fff, var(--neon)); border-radius: 50%; box-shadow: 0 0 50px var(--neon); cursor: pointer; z-index: 1000; }
     </style>
 </head>
 <body>
 
 <div id="viewport">
-    <div class="hud" id="hud-univ">
-        <span style="color:var(--neon)">ESTADO ACADÉMICO</span><br>
-        IUT: <b>Ing. Agropecuaria</b>
-    </div>
-    <div class="hud" id="hud-eng">
-        <span style="color:var(--gold)">SISTEMA OMEGA</span><br>
-        Voz: <b>Protocolo JARVIS</b>
-    </div>
-    <div class="hud" id="hud-sec">
-        🛡️ ACCESO: <b>CONCEDIDO</b><br>
-        USUARIO: <b style="color:#00ffaa">ELKIN VEGA</b>
-    </div>
+    <div class="hud" id="hud-univ">ESTADO ACADÉMICO<br>IUT: <b>Ing. Agropecuaria</b></div>
+    <div class="hud" id="hud-eng">SISTEMA OMEGA<br>Voz: <b>Protocolo JARVIS</b></div>
+    <div class="hud" id="hud-sec">🛡️ ACCESO: <b>CONCEDIDO</b><br>USUARIO: <b style="color:#00ffaa">ELKIN VEGA</b></div>
     <div id="spirit"></div>
-    <div id="comm-orb" onclick="iniciarEscucha()"></div>
+    <div id="comm-orb" onclick="activarYEscuchar()"></div>
 </div>
 
-<div id="eng-view" class="overlay">
-    <h2 style="color:var(--gold); letter-spacing: 3px;">[ RECONOCIMIENTO DE VOZ ]</h2>
-    <hr style="border-color: var(--neon);">
-    <div id="eng-output" style="color:#00ffaa; font-size:1.4rem; margin-top: 40px; min-height: 100px;"></div>
-    <button onclick="cerrarVistas()" style="margin-top:50px; background: none; border: 1px solid #fff; color: #fff; padding: 15px 40px; border-radius: 20px;">CERRAR INTERFAZ</button>
+<div id="eng-view" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; text-align:center; padding-top:50px;">
+    <h2 style="color:var(--gold);">[ ESCUCHANDO SEÑOR ]</h2>
+    <div id="eng-output" style="color:#00ffaa; font-size:1.5rem; margin:40px;"></div>
+    <button onclick="cerrarVistas()" style="background:none; border:1px solid #fff; color:#fff; padding:15px; border-radius:10px;">CERRAR</button>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
-    const output = document.getElementById('eng-output');
 
-    // CONFIGURACIÓN DE VOZ ESTILO JARVIS
     function hablar(texto) {
+        // Cancelamos cualquier voz previa para que no se atore
+        synth.cancel();
         const mensaje = new SpeechSynthesisUtterance(texto);
-        mensaje.lang = 'es-ES'; // Castellano para un toque más formal y elegante
-        mensaje.pitch = 0.7;    // Voz más grave
-        mensaje.rate = 0.95;    // Un poco más pausada
-        mensaje.volume = 1;
+        mensaje.lang = 'es-ES'; 
+        mensaje.pitch = 0.8; 
+        mensaje.rate = 0.9;
         synth.speak(mensaje);
     }
 
-    // RECONOCIMIENTO DE VOZ (OÍDOS)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition ? new SpeechRecognition() : null;
 
     if (recognition) {
         recognition.lang = 'es-VE';
-        recognition.continuous = false;
         recognition.onresult = (event) => {
             const voz = event.results[0][0].transcript.toLowerCase();
-            output.innerHTML = '"' + voz + '"';
+            document.getElementById('eng-output').innerHTML = '"' + voz + '"';
             procesarOrden(voz);
-        };
-        recognition.onerror = () => {
-            hablar("Hubo un error en la conexión neuronal, Señor.");
-            cerrarVistas();
         };
     }
 
-    function iniciarEscucha() {
+    // ESTA FUNCIÓN ES LA CLAVE PARA IPHONE
+    function activarYEscuchar() {
+        // Desbloquea el audio con un sonido mudo
+        hablar(""); 
+        
         document.getElementById('eng-view').style.display = 'block';
-        output.innerHTML = "Escuchando, Señor...";
+        document.getElementById('eng-output').innerHTML = "Diga algo, Señor...";
+        
         if(recognition) recognition.start();
-        else hablar("El navegador no soporta protocolos de escucha.");
     }
 
     function procesarOrden(input) {
-        // LÓGICA DE RESPUESTAS JARVIS
-        if (input.includes("quién soy") || input.includes("quién eres")) {
-            hablar("Usted es el Ingeniero Elkin Vega. Yo soy ELKIN-OS, su interfaz personal. Un placer verle de nuevo, Señor.");
+        if (input.includes("quién soy")) {
+            hablar("Usted es el Ingeniero Elkin Vega. Un placer saludarle, Señor.");
         } else if (input.includes("hola") || input.includes("jarvis")) {
-            hablar("A sus órdenes, Señor. Todos los sistemas del IUT y del taller de peluquería están operativos.");
-        } else if (input.includes("estado") || input.includes("analiza")) {
-            hablar("Realizando un escaneo completo de los servidores... La integridad del sistema es del cien por ciento.");
-        } else if (input.includes("adiós") || input.includes("descansa")) {
-            hablar("Entendido, Señor. Estaré en segundo plano por si me necesita.");
-            setTimeout(cerrarVistas, 2000);
+            hablar("Sistemas en línea. ¿En qué puedo ayudarle hoy, Señor?");
         } else {
-            hablar("He procesado su comando, Señor. Pero me temo que no tengo datos suficientes sobre: " + input);
+            hablar("He recibido la señal, Señor. Pero necesito instrucciones más precisas.");
         }
     }
 
     function cerrarVistas() {
         document.getElementById('eng-view').style.display = 'none';
     }
-
-    // SALUDO INICIAL AL CARGAR
-    window.onload = () => {
-        setTimeout(() => {
-            hablar("Protocolo OMEGA cargado. Bienvenido a casa, Señor Vega.");
-        }, 1500);
-    };
 </script>
 </body>
 </html>
