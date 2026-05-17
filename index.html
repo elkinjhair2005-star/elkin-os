@@ -3,109 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | OMEGA</title>
+    <title>ELKIN-OS V5.0 | NLU</title>
     <style>
-        body { background: #000; color: #ffd700; font-family: 'Arial', sans-serif; margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        .header { padding: 20px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; }
-        
-        /* NÚCLEO DINÁMICO */
-        .core-wrapper { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .stark-sphere {
-            width: 200px; height: 200px; border: 4px double #ffd700; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); transition: 0.3s;
-            animation: pulse 2s infinite ease-in-out;
-        }
-        .core-text { font-size: 14px; letter-spacing: 5px; font-weight: bold; color: #fff; text-shadow: 0 0 10px #ffd700; }
-
-        /* TERMINAL DE IA */
-        .footer-terminal { margin: 20px; padding: 15px; border: 1px solid #00d4ff; background: rgba(0, 20, 30, 0.8); border-radius: 5px; font-family: monospace; font-size: 10px; color: #00d4ff; min-height: 50px; }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
+        :root { --cian: #00d4ff; --oro: #ffd700; --bg: #010c12; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .header { border-bottom: 1px solid var(--cian); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .title { color: var(--cian); font-weight: bold; letter-spacing: 2px; font-size: 18px; }
+        .terminal { background: rgba(0, 212, 255, 0.05); border: 1px solid var(--cian); border-radius: 10px; padding: 15px; font-family: monospace; min-height: 100px; box-shadow: inset 0 0 10px rgba(0, 212, 255, 0.2); }
+        .btn-core { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--cian); margin: 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--cian); cursor: pointer; transition: 0.3s; }
+        .btn-core:active { transform: scale(0.9); box-shadow: 0 0 40px var(--oro); border-color: var(--oro); }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div>SYSTEM: ELKIN-OS<br>USER: ELKIN VEGA</div>
-        <div>STATUS: ONLINE<br>MODE: AI-BRAIN</div>
-    </div>
+<div class="header">
+    <div class="title">ELKIN-OS</div>
+    <div style="font-size: 10px; text-align: right;">V5.0 OMEGA<br>ADMIN: ELKIN VEGA</div>
+</div>
 
-    <div class="core-wrapper" onclick="encenderSistema()">
-        <div class="stark-sphere" id="sphere">
-            <div class="core-text">ELKIN-OS</div>
-        </div>
-    </div>
+<div class="btn-core" onclick="iniciarEscucha()">
+    <span id="status-text" style="font-size: 10px; color: var(--cian);">LISTO</span>
+</div>
 
-    <div class="footer-terminal" id="terminal">
-        > SISTEMA EN ESPERA.<br>
-        > TOQUE EL NÚCLEO PARA INICIAR PROTOCOLO.
-    </div>
+<div class="terminal" id="terminal">
+    > SISTEMA NOMINAL...<br>
+    > TOQUE EL NÚCLEO PARA HABLAR.
+</div>
 
 <script>
-    // --- MÓDULO CEREBRAL (LA INTELIGENCIA) ---
+    // --- MOTOR DE COMPRENSIÓN NATURAL (EL CEREBRO) ---
     const Brain = {
-        procesar: function(input) {
-            const frase = input.toLowerCase();
-            if (this.match(frase, ["hola", "saludos", "despierta"])) 
-                return "Protocolo de bienvenida activo. ¿Qué órdenes tiene, Elkin?";
-            
-            if (this.match(frase, ["agro", "estudio", "iut", "planta", "botánica"])) 
-                return "Accediendo a módulos de Ingeniería Agropecuaria. El análisis morfológico está listo.";
-            
-            if (this.match(frase, ["perro", "peluquería", "canina", "cliente", "baño"])) 
-                return "Panel de peluquería canina activo. ¿Desea revisar la agenda de servicios?";
-            
-            if (this.match(frase, ["quién soy", "nombre", "identidad"])) 
-                return "Usted es Elkin, el comandante de este sistema operativo.";
+        intenciones: [
+            {
+                nombre: "ACADEMICO",
+                keys: ["estudio", "universidad", "tarea", "agro", "iut", "clase", "examen", "botánica", "plantas"],
+                resp: "Accediendo a los archivos de Ingeniería Agropecuaria. ¿En qué tema trabajaremos, Elkin?"
+            },
+            {
+                nombre: "NEGOCIO",
+                keys: ["perro", "cliente", "peluquería", "grooming", "baño", "corte", "mascota"],
+                resp: "Panel de control de la peluquería activo. Listado de clientes cargado."
+            },
+            {
+                nombre: "SEGURIDAD",
+                keys: ["hack", "intruso", "seguridad", "alerta", "bloqueo"],
+                resp: "Protocolo de seguridad activado. Escaneando perímetros digitales."
+            }
+        ],
 
-            return "He registrado su mensaje, pero no tengo datos locales. ¿Indago en la red?";
-        },
-        match: (txt, keys) => keys.some(k => txt.includes(k))
+        procesar: function(frase) {
+            const input = frase.toLowerCase();
+            
+            // Lógica de búsqueda (Investigación)
+            if (input.includes("busca") || input.includes("investiga") || input.includes("qué es")) {
+                let tema = input.replace(/busca|investiga|qué es/g, "").trim();
+                window.open(`https://www.google.com/search?q=${tema}`, '_blank');
+                return `Indagando en la red sobre ${tema}.`;
+            }
+
+            // Lógica de intenciones generales
+            for (let i of this.intenciones) {
+                if (i.keys.some(k => input.includes(k))) return i.resp;
+            }
+
+            return "Entendido, Elkin. Procesando tu solicitud en el núcleo central.";
+        }
     };
 
-    // --- MÓDULO DE VOZ Y OÍDO ---
-    const synth = window.speechSynthesis;
-    const Recognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    const rec = new Recognition();
+    // --- SENSORES DE VOZ ---
+    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
     rec.lang = 'es-VE';
-    rec.continuous = false;
 
     function hablar(t) {
-        synth.cancel();
+        window.speechSynthesis.cancel();
         const m = new SpeechSynthesisUtterance(t);
-        m.lang = 'es-MX'; m.rate = 1.0; m.pitch = 0.9;
-        synth.speak(m);
+        m.lang = 'es-MX';
+        window.speechSynthesis.speak(m);
     }
 
-    // --- LÓGICA DE CONTROL ---
-    function encenderSistema() {
-        hablar("Iniciando sensores de audio. Elkin-OS le escucha.");
-        document.getElementById('terminal').innerHTML = "> ESCUCHANDO...";
-        document.getElementById('sphere').style.borderColor = "#00ffaa";
+    function iniciarEscucha() {
         rec.start();
+        document.getElementById('status-text').innerHTML = "OYENDO";
+        document.getElementById('status-text').style.color = "#00ffaa";
     }
 
     rec.onresult = (event) => {
         const voz = event.results[0][0].transcript;
         const respuesta = Brain.procesar(voz);
         
-        document.getElementById('terminal').innerHTML = `> USTED: ${voz}<br>> IA: ${respuesta}`;
+        document.getElementById('terminal').innerHTML = `> TU: ${voz}<br>> OS: ${respuesta}`;
         hablar(respuesta);
-        
-        // El núcleo brilla cuando responde
-        document.getElementById('sphere').style.boxShadow = "0 0 60px #ffd700";
-        setTimeout(() => { 
-            document.getElementById('sphere').style.boxShadow = "0 0 30px rgba(255, 215, 0, 0.5)";
-        }, 2000);
-    };
-
-    rec.onend = () => {
-        // Reinicio automático para escucha continua (Always-on)
-        rec.start();
+        document.getElementById('status-text').innerHTML = "LISTO";
+        document.getElementById('status-text').style.color = "var(--cian)";
     };
 </script>
 </body>
