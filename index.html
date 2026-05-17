@@ -13,36 +13,51 @@
         #hud-eng { top: 5%; right: 5%; width: 150px; border-color: var(--gold); }
         #hud-sec { bottom: 20%; left: 5%; border-color: #00ffaa; }
         #spirit { width: 180px; height: 180px; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); filter: blur(15px); border-radius: 50%; animation: pulse 4s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.9; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.3); opacity: 0.8; } }
         #comm-orb { position: absolute; bottom: 40px; width: 90px; height: 90px; background: radial-gradient(circle, #fff, var(--neon)); border-radius: 50%; box-shadow: 0 0 50px var(--neon); cursor: pointer; z-index: 1000; }
     </style>
 </head>
 <body>
 
 <div id="viewport">
-    <div class="hud" id="hud-univ">ESTADO ACADÉMICO<br>IUT: <b>Ing. Agropecuaria</b></div>
-    <div class="hud" id="hud-eng">SISTEMA OMEGA<br>Voz: <b>Protocolo JARVIS</b></div>
-    <div class="hud" id="hud-sec">🛡️ ACCESO: <b>CONCEDIDO</b><br>USUARIO: <b style="color:#00ffaa">ELKIN VEGA</b></div>
+    <div class="hud" id="hud-univ">NIVEL ACADÉMICO<br>IUT: <b>Ing. Agropecuaria</b></div>
+    <div class="hud" id="hud-eng">SISTEMA INTELIGENTE<br>Voz: <b>IA JARVIS</b></div>
+    <div class="hud" id="hud-sec">🛡️ SEGURIDAD<br>USUARIO: <b style="color:#00ffaa">ELKIN VEGA</b></div>
     <div id="spirit"></div>
     <div id="comm-orb" onclick="activarYEscuchar()"></div>
 </div>
 
 <div id="eng-view" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; text-align:center; padding-top:50px;">
-    <h2 style="color:var(--gold);">[ ESCUCHANDO SEÑOR ]</h2>
-    <div id="eng-output" style="color:#00ffaa; font-size:1.5rem; margin:40px;"></div>
-    <button onclick="cerrarVistas()" style="background:none; border:1px solid #fff; color:#fff; padding:15px; border-radius:10px;">CERRAR</button>
+    <h2 style="color:var(--gold); letter-spacing: 2px;">[ ESCUCHANDO, SEÑOR ]</h2>
+    <div id="eng-output" style="color:#00ffaa; font-size:1.6rem; margin:40px; font-weight: bold;"></div>
+    <button onclick="cerrarVistas()" style="background:none; border:1px solid #fff; color:#fff; padding:15px 30px; border-radius:30px; font-family: 'Courier New';">CANCELAR PROTOCOLO</button>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
+    let voces = [];
+
+    // Cargar voces disponibles
+    function cargarVoces() {
+        voces = synth.getVoices();
+    }
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = cargarVoces;
+    }
 
     function hablar(texto) {
-        // Cancelamos cualquier voz previa para que no se atore
         synth.cancel();
         const mensaje = new SpeechSynthesisUtterance(texto);
+        
+        // Buscamos una voz que suene masculina y elegante (español o castellano)
+        const vozJarvis = voces.find(v => v.name.includes('Jorge') || v.name.includes('Enrique') || v.lang === 'es-ES');
+        if (vozJarvis) mensaje.voice = vozJarvis;
+
         mensaje.lang = 'es-ES'; 
-        mensaje.pitch = 0.8; 
-        mensaje.rate = 0.9;
+        mensaje.pitch = 0.65; // Tono grave como en las películas
+        mensaje.rate = 0.9;   // Pausado y elegante
+        mensaje.volume = 1;
+        
         synth.speak(mensaje);
     }
 
@@ -58,24 +73,23 @@
         };
     }
 
-    // ESTA FUNCIÓN ES LA CLAVE PARA IPHONE
     function activarYEscuchar() {
-        // Desbloquea el audio con un sonido mudo
+        // Truco para iPhone: emitir un sonido mudo para habilitar la bocina
         hablar(""); 
-        
         document.getElementById('eng-view').style.display = 'block';
-        document.getElementById('eng-output').innerHTML = "Diga algo, Señor...";
-        
+        document.getElementById('eng-output').innerHTML = "Esperando órdenes...";
         if(recognition) recognition.start();
     }
 
     function procesarOrden(input) {
-        if (input.includes("quién soy")) {
-            hablar("Usted es el Ingeniero Elkin Vega. Un placer saludarle, Señor.");
+        if (input.includes("quién soy") || input.includes("quién eres")) {
+            hablar("Usted es el Ingeniero Elkin Vega. Yo soy su sistema personal, configurado para asistirle, Señor.");
         } else if (input.includes("hola") || input.includes("jarvis")) {
-            hablar("Sistemas en línea. ¿En qué puedo ayudarle hoy, Señor?");
+            hablar("A sus órdenes, Señor. Todos los sistemas están operativos y listos para su inspección.");
+        } else if (input.includes("estado")) {
+            hablar("La integridad del sistema es estable. La base de datos de Ingeniería Agropecuaria está sincronizada, Señor.");
         } else {
-            hablar("He recibido la señal, Señor. Pero necesito instrucciones más precisas.");
+            hablar("Señal recibida, Señor. Procesando datos sobre: " + input);
         }
     }
 
