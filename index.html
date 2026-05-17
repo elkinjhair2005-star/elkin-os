@@ -3,44 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS V5.0</title>
+    <title>ELKIN-OS V5.0 | OMEGA</title>
     <style>
-        :root { --cian: #00d4ff; --bg: #0b1114; --panel: rgba(0, 212, 255, 0.05); }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
-        .header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(0,212,255,0.2); padding-bottom: 10px; }
-        .os-name { color: var(--cian); font-weight: bold; letter-spacing: 2px; font-size: 22px; }
-        .section-title { color: var(--cian); font-size: 10px; text-transform: uppercase; margin: 15px 0 5px; }
-        .panel { background: var(--panel); border: 1px solid rgba(0, 212, 255, 0.1); border-radius: 4px; padding: 12px; }
-        .row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
-        .value { color: var(--cian); }
-        .terminal-box { border-left: 2px solid var(--cian); padding-left: 15px; margin: 20px 0; min-height: 120px; font-family: monospace; color: #00d4ff; font-size: 13px; background: rgba(0,0,0,0.2); padding: 10px; }
-        .core-trigger { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; border: 2px solid var(--cian); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); background: var(--bg); }
+        :root { --cian: #00d4ff; --bg: #0b1114; --oro: #ffd700; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .os-name { color: var(--cian); font-weight: bold; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid rgba(0,212,255,0.2); padding-bottom: 10px; margin-bottom: 20px; }
+        .panel { background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.1); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+        .terminal { background: #000; border-left: 3px solid var(--cian); padding: 15px; font-family: monospace; min-height: 150px; color: var(--cian); box-shadow: 0 0 15px rgba(0,212,255,0.1); }
+        .core { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 70px; height: 70px; border: 2px solid var(--cian); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--cian); background: var(--bg); }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="os-name">ELKIN-OS</div>
-    </div>
+<div class="os-name">ELKIN-OS</div>
 
-    <div class="section-title">⚡ ESTADO DEL SISTEMA</div>
-    <div class="panel">
-        <div class="row"><span style="color:#888">Usuario</span> <span class="value">Señor Vega</span></div>
-        <div class="row"><span style="color:#888">Núcleo</span> <span id="status-val" class="value">NOMINAL</span></div>
-    </div>
+<div class="panel">
+    <div class="row"><span>USUARIO</span> <span style="color:var(--cian)">SEÑOR VEGA</span></div>
+    <div class="row"><span>SISTEMA</span> <span id="status" style="color:var(--oro)">NOMINAL</span></div>
+</div>
 
-    <div class="terminal-box" id="output">
-        > SISTEMA ONLINE V5.0<br>
-        > BIENVENIDO, SEÑOR VEGA. ESPERANDO ORDEN...
-    </div>
+<div class="terminal" id="output">
+    > SISTEMA CONECTADO AL NÚCLEO GOOGLE.<br>
+    > BIENVENIDO, SEÑOR VEGA.
+</div>
 
-    <div class="core-trigger" onclick="activarVoz()">
-        <div id="core-inner" style="width: 25px; height: 25px; border: 2px solid var(--cian); border-radius: 50%;"></div>
-    </div>
+<div class="core" onclick="activarIA()">
+    <div id="inner-core" style="width: 20px; height: 20px; background: var(--cian); border-radius: 50%;"></div>
+</div>
 
 <script>
-    // --- PEGA TU CLAVE AQUÍ ABAJO ---
-    const API_KEY = "AIzaSyBpLCvop9Pe0MRJQ3cItaqK-VfqLMEM2ss"; 
+    const API_KEY = "AIzaSyBpLCvop9Pe0MRJQ3cItaqK-VfqLMEM2ss"; // <--- PEGA TU LLAVE AQUÍ
 
     const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
     rec.lang = 'es-VE';
@@ -52,37 +45,33 @@
         window.speechSynthesis.speak(m);
     }
 
-    function activarVoz() {
+    function activarIA() {
         rec.start();
-        document.getElementById('status-val').innerHTML = "OYENDO...";
-        document.getElementById('core-inner').style.borderColor = "#ff4b2b";
+        document.getElementById('status').innerHTML = "ESCUCHANDO...";
+        document.getElementById('inner-core').style.background = "#ff4b2b";
     }
 
     rec.onresult = async (event) => {
         const voz = event.results[0][0].transcript;
-        document.getElementById('output').innerHTML = `> USTED: ${voz}<br>> ANALIZANDO...`;
+        document.getElementById('output').innerHTML = `> TU: ${voz}<br>> PENSANDO...`;
         
         try {
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: `Eres ELKIN-OS, la IA personal de Elkin Vega. Eres un experto en Ingeniería Agropecuaria y Peluquería Canina. Responde de forma muy breve, técnica y épica: ${voz}` }] }]
+                    contents: [{ parts: [{ text: `Eres ELKIN-OS, la IA personal del Señor Elkin Vega. Eres un experto en Ingeniería Agropecuaria y Peluquería Canina. Responde de forma muy breve y épica: ${voz}` }] }]
                 })
             });
-
             const data = await res.json();
             const respuesta = data.candidates[0].content.parts[0].text;
-
-            document.getElementById('output').innerHTML = `> USTED: ${voz}<br>> OS: ${respuesta}`;
+            document.getElementById('output').innerHTML = `> TU: ${voz}<br>> OS: ${respuesta}`;
             hablar(respuesta);
-
         } catch (e) {
-            document.getElementById('output').innerHTML = `> ERROR: Revisa la conexión o la Clave API.`;
+            document.getElementById('output').innerHTML = `> ERROR: Revisa tu API KEY.`;
         }
-        
-        document.getElementById('status-val').innerHTML = "NOMINAL";
-        document.getElementById('core-inner').style.borderColor = "var(--cian)";
+        document.getElementById('status').innerHTML = "NOMINAL";
+        document.getElementById('inner-core').style.background = "var(--cian)";
     };
 </script>
 </body>
