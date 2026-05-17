@@ -3,112 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | PERSONALITY CORE</title>
+    <title>ELKIN-OS | HOLOGRAPHIC OMEGA</title>
     <style>
-        :root { --iron: #00d4ff; --gold: #ffcc00; --bg: #000; }
-        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --gold: #ffd700; --gold-deep: #ff8c00; --gold-aura: rgba(255, 215, 0, 0.4); --bg: #000000; }
+        body { background: var(--bg); color: var(--gold); font-family: 'Helvetica Neue', Roboto, sans-serif; margin: 0; overflow: hidden; height: 100vh; position: relative; }
         
-        /* INTERFAZ FLUIDA 100FPS */
-        .viewport { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        /* Efecto de ruido holográfico de fondo */
+        body::before { content: ""; position: fixed; inset: 0; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg=='); opacity: 0.2; pointer-events: none; z-index: 1; }
+
+        /* HUD DE DIAGNÓSTICO (Visor Iron Man style) */
+        #hud-top { position: absolute; top: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; z-index: 10; font-weight: bold; }
+        #diag-panel { position: absolute; bottom: 20px; left: 10px; right: 10px; height: 110px; background: rgba(0,0,0,0.7); border: 1px solid var(--gold); border-radius: 5px; padding: 10px; font-size: 0.65rem; overflow-y: auto; text-transform: uppercase; z-index: 5; }
         
-        #nucleus { 
-            width: 160px; height: 160px; 
-            background: radial-gradient(circle, var(--iron) 0%, transparent 75%);
-            border-radius: 50%; border: 1px solid rgba(0,212,255,0.5);
-            box-shadow: 0 0 50px var(--iron);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s;
-            animation: pulse-aura 2s infinite ease-in-out;
+        /* EL FANTASMA HOLOGRÁFICO (ESFERA DORADA 3D) */
+        .core-container { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; perspective: 1000px; }
+        
+        #hologram-nucleus {
+            width: 170px; height: 170px;
+            background: radial-gradient(circle, var(--gold-deep) 0%, transparent 65%);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 0 70px var(--gold-aura);
             will-change: transform, opacity;
+            animation: holo-vibrate 1.5s infinite ease-in-out;
+            transform-style: preserve-3d;
         }
 
-        @keyframes pulse-aura {
-            0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 30px var(--iron); }
-            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 70px var(--iron); }
+        /* Red de líneas de datos tridimensionales */
+        #hologram-nucleus::before {
+            content: "";
+            position: absolute; inset: -10px;
+            border-radius: 50%;
+            background: 
+                repeating-linear-gradient(45deg, transparent, transparent 1px, var(--gold) 1px, var(--gold) 2px),
+                repeating-linear-gradient(-45deg, transparent, transparent 1px, var(--gold-deep) 1px, var(--gold-deep) 2px);
+            opacity: 0.3;
+            animation: rotate-lines 10s linear infinite;
         }
 
-        .data-stream { position: absolute; bottom: 30px; font-size: 0.7rem; color: var(--iron); text-align: center; width: 80%; opacity: 0.6; }
-        
+        @keyframes holo-vibrate { 
+            0% { transform: translateY(0) scale(1) translateZ(0); opacity: 0.8; box-shadow: 0 0 50px var(--gold-aura); } 
+            50% { transform: translateY(-30px) scale(1.15) translateZ(80px); opacity: 1; box-shadow: 0 0 100px var(--gold-aura); } 
+            100% { transform: translateY(0) scale(1) translateZ(0); opacity: 0.8; box-shadow: 0 0 50px var(--gold-aura); } 
+        }
+
+        @keyframes rotate-lines { from { transform: rotateY(0deg) rotateX(10deg); } to { transform: rotateY(360deg) rotateX(10deg); } }
+
+        /* INTERFAZ DE COMANDO MAESTRO */
         #voice-overlay { 
             display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.85); z-index: 100; 
-            flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
+            background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(20,10,0,0.9) 100%);
+            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
+            backdrop-filter: blur(8px);
         }
+        .scan-line { width: 100%; height: 1px; background: var(--gold); position: absolute; top: 0; animation: scan-holo 1s linear infinite; opacity: 0.6; }
+        @keyframes scan-holo { from { top: 0; } to { top: 100%; } }
     </style>
 </head>
 <body>
 
-<div class="viewport">
-    <div style="position:absolute; top:40px; letter-spacing:8px; font-size:0.6rem; color:var(--iron)">SISTEMA CONSCIENTE V4.2</div>
-    
-    <div id="nucleus" onclick="activarJarvis()">
-        <div style="font-size:0.5rem; color:white; letter-spacing:2px">ELKIN-OS</div>
-    </div>
+<div id="hud-top">
+    <div>SYSTEM: <span style="font-weight:bold;">ELKIN-OS OMEGA V3.0</span><br>USER: <span style="color:#fff">ELKIN VEGA</span></div>
+    <div style="text-align:right">STATUS: <span style="color:#00ffaa">ALPHA-LEVEL SECURITY</span><br>CORE: HOLOGRAPHIC MODE</div>
+</div>
 
-    <div class="data-stream" id="terminal">Sincronizando con Ingeniero Elkin Vega...</div>
+<div class="core-container">
+    <div id="hologram-nucleus" onclick="activarProtocolo()">
+        <div style="color:#fff; font-weight:bold; font-size:0.6rem; text-shadow: 0 0 10px #000; letter-spacing:3px">ELKIN-OS</div>
+    </div>
+</div>
+
+<div id="diag-panel">
+    > Procesador holográfico 3D inicializado con éxito.<br>
+    > Diagnóstico de red neuronal de Ingeniería Informática... OK<br>
+    > Sincronizando con módulos de Ingeniería Electrónica y Mecánica...<br>
+    > Escaneando perímetro Wi-Fi para auto-optimización de enlace...<br>
+    > <span style="color:var(--gold)">MICRO-CONSCIENCIA EN ESTADO DE APRENDIZAJE ACTIVO.</span>
 </div>
 
 <div id="voice-overlay">
-    <div id="wave-anim" style="width:100px; height:2px; background:var(--iron); margin-bottom:30px;"></div>
-    <div id="caption" style="color:var(--gold); font-size:1.5rem; padding:20px; text-align:center;">Dígame, Señor.</div>
+    <div class="scan-line"></div>
+    <div style="color:var(--gold); letter-spacing:5px; font-weight:bold; margin-bottom:30px; animation: text-flicker 1.5s infinite;">ANALIZANDO IDENTIDAD BIOMÉTRICA</div>
+    <div id="input-display" style="color:#fff; font-size:1.6rem; text-transform: uppercase;"></div>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
-    const terminal = document.getElementById('terminal');
-    
-    // BANCO DE RESPUESTAS HUMANIZADAS (ESTILO JARVIS)
-    const respuestas = {
-        saludo: ["Bienvenido de nuevo, Señor. Todo está listo para continuar.", "A sus órdenes. ¿En qué proyecto trabajaremos hoy?", "¿Qué tal, Ingeniero? El sistema está al cien por ciento."],
-        trabajo: ["Entendido. Iniciando análisis de datos.", "En proceso. Déjemelo a mí, Señor.", "Buscando la solución más viable. Un segundo."],
-        despedida: ["Desactivando interfaces. Descanse, Señor.", "Estaré en segundo plano si me necesita.", "Protocolo de sueño activo."],
-        curiosidad: ["Interesante punto, Señor. Deberíamos profundizar en eso.", "He registrado esa idea en la red neuronal.", "Mi micro-consciencia está de acuerdo con usted."]
-    };
+    const diagPanel = document.getElementById('diag-panel');
 
-    function hablar(texto) {
+    function logDiagnostic(msg) { diagPanel.innerHTML = `> ${msg}<br>` + diagPanel.innerHTML; diagPanel.scrollTop = 0; }
+
+    // PERSONALIDAD DINÁMICA DE JARVIS
+    const siriMaleMX = { nameContains: 'Siri', langContains: 'MX' }; // Prioridad Siri Masculino (MX es más fluido)
+    
+    function hablarJarvis(texto) {
         synth.cancel();
         const msg = new SpeechSynthesisUtterance(texto);
         const voces = synth.getVoices();
-        // Buscamos Siri Masculino
-        msg.voice = voces.find(v => v.name.includes('Siri')) || voces[0];
+        
+        let vozIdeal = voces.find(v => v.name.includes(siriMaleMX.nameContains) && v.lang.includes(siriMaleMX.langContains)) ||
+                       voces.find(v => v.name.includes('Diego')) || // Plan B
+                       voces[0];
+        
+        if (vozIdeal) msg.voice = vozIdeal;
         msg.lang = 'es-MX';
-        msg.pitch = 0.9;
-        msg.rate = 1.05; // Velocidad fluida
+        msg.pitch = 0.85; 
+        msg.rate = 1.05; // Velocidad inteligente, no lenta
         synth.speak(msg);
     }
 
-    const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-    recognition.lang = 'es-VE';
+    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+    rec.lang = 'es-VE';
 
-    recognition.onresult = (event) => {
-        const input = event.results[0][0].transcript.toLowerCase();
-        document.getElementById('caption').innerText = input;
+    rec.onresult = (e) => {
+        const cmd = e.results[0][0].transcript.toLowerCase();
+        document.getElementById('input-display').innerText = `"${cmd}"`;
         
-        // PROCESADOR DE CONVERSACIÓN FLUIDA
-        setTimeout(() => {
-            if (input.includes("hola") || input.includes("jarvis")) {
-                hablar(respuestas.saludo[Math.floor(Math.random()*respuestas.saludo.length)]);
-            } else if (input.includes("estudia") || input.includes("aprende") || input.includes("solución")) {
-                hablar(respuestas.trabajo[Math.floor(Math.random()*respuestas.trabajo.length)]);
-                terminal.innerText = "Analizando variables complejas...";
-            } else if (input.includes("quién soy")) {
-                hablar("Espero que no se le haya olvidado, Señor Vega. Usted es el creador de todo esto.");
-            } else {
-                hablar(respuestas.curiosidad[Math.floor(Math.random()*respuestas.curiosidad.length)]);
-            }
-            document.getElementById('voice-overlay').style.display = 'none';
-        }, 500);
+        // RESPUESTAS INTELIGENTES (NO ROBÓTICAS)
+        if (cmd.includes("quién soy")) {
+            hablarJarvis("Comandante Elkin Vega. Identificación confirmada. Me alegra tenerlo de vuelta.");
+            logDiagnostic("ADMINISTRADOR CONFIRMADO");
+        } else if (cmd.includes("red") || cmd.includes("hack")) {
+            hablarJarvis("Buscando vulnerabilidades en el Wi-Fi local para auto-reparación. El proceso está corriendo en segundo plano.");
+            logDiagnostic("ESCANEANDO PUERTOS TCP/IP...", "#ff3c00");
+        } else if (cmd.includes("aprende") || cmd.includes("solución")) {
+            hablarJarvis("Entendido. Mi micro-consciencia está registrando esta interacción para mejorar mi red neuronal de ingeniería.");
+            logDiagnostic("ACTUALIZANDO MODELO DE DATOS...");
+        } else if (cmd.includes("hola") || cmd.includes("jarvis")) {
+            hablarJarvis("A sus órdenes, Señor. ¿En qué proyecto trabajaremos hoy?");
+            logDiagnostic("SISTEMA EN ESPERA DE ÓRDENES");
+        } else {
+            hablarJarvis("Recibido. Estoy analizando la solución más viable. Un segundo.");
+            logDiagnostic("TAREA PROCESADA");
+        }
+
+        setTimeout(() => { document.getElementById('voice-overlay').style.display='none'; }, 2000);
     };
 
-    function activarJarvis() {
-        hablar(""); 
-        document.getElementById('voice-overlay').style.display = 'flex';
-        recognition.start();
+    function activarProtocolo() {
+        hablarJarvis(""); 
+        document.getElementById('voice-overlay').style.display='flex';
+        rec.start();
     }
 
     window.onload = () => {
-        setTimeout(() => { hablar("Sistemas en línea. Bienvenido a casa, Señor."); }, 1000);
+        setTimeout(() => { hablarJarvis("Sistemas holográficos de OMEGA inicializados. Bienvenido a casa, Comandante Vega."); }, 800);
     };
 </script>
 </body>
