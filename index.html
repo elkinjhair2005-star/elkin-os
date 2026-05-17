@@ -3,151 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | OMEGA CORE</title>
+    <title>ELKIN-OS | PROTOCOLO JARVIS</title>
     <style>
-        :root { --neon: #00d4ff; --gold: #ffcc00; --danger: #ff0033; --bg: #000; }
-        body { background: var(--bg); color: #fff; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; transition: background 0.5s; }
-        
-        /* Interfaz HUD Stark */
+        :root { --neon: #00d4ff; --gold: #ffcc00; --bg: #000; }
+        body { background: var(--bg); color: #fff; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
         #viewport { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hud { position: absolute; border: 1px solid var(--neon); background: rgba(0, 20, 30, 0.85); padding: 12px; border-radius: 8px; font-size: 0.7rem; box-shadow: 0 0 15px rgba(0,212,255,0.2); }
         #hud-univ { top: 5%; left: 5%; width: 150px; }
         #hud-eng { top: 5%; right: 5%; width: 150px; border-color: var(--gold); }
         #hud-sec { bottom: 20%; left: 5%; border-color: #00ffaa; }
-
-        /* El Espíritu Central */
-        #spirit { width: 170px; height: 170px; background: radial-gradient(circle, var(--neon) 0%, transparent 75%); filter: blur(10px); border-radius: 50%; animation: pulse 3s infinite ease-in-out; border: 1px solid rgba(0,212,255,0.2); }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 1; } }
-
-        /* Orbe de Comando */
-        #comm-orb { position: absolute; bottom: 30px; width: 80px; height: 80px; background: radial-gradient(circle, #fff, var(--neon)); border-radius: 50%; box-shadow: 0 0 40px var(--neon); cursor: pointer; z-index: 1000; }
-        
-        /* Pantallas Especiales */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 25px; overflow-y: auto; box-sizing: border-box; }
-        #emergency-view { background: var(--danger); text-align: center; color: white; }
-        #eng-view { color: var(--gold); }
-        
-        .btn { background: var(--neon); border: none; padding: 10px; margin-top: 20px; color: #000; font-weight: bold; width: 100%; border-radius: 5px; }
+        #spirit { width: 180px; height: 180px; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); filter: blur(15px); border-radius: 50%; animation: pulse 4s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.9; } }
+        #comm-orb { position: absolute; bottom: 40px; width: 90px; height: 90px; background: radial-gradient(circle, #fff, var(--neon)); border-radius: 50%; box-shadow: 0 0 50px var(--neon); cursor: pointer; z-index: 1000; transition: 0.3s; }
+        #comm-orb:active { transform: scale(0.9); filter: brightness(1.5); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 30px; box-sizing: border-box; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="viewport">
     <div class="hud" id="hud-univ">
-        <span style="color:var(--neon)">IUT ACADÉMICO</span><br>
-        Carrera: <b>Ing. Agroindustrial</b><br>
-        Status: <b>98% Optimizado</b>
+        <span style="color:var(--neon)">ESTADO ACADÉMICO</span><br>
+        IUT: <b>Ing. Agropecuaria</b>
     </div>
-
     <div class="hud" id="hud-eng">
-        <span style="color:var(--gold)">INGENIERÍA</span><br>
-        Módulo: <b>Analizador Activo</b><br>
-        Proyectos: <b>Robótica V1</b>
+        <span style="color:var(--gold)">SISTEMA OMEGA</span><br>
+        Voz: <b>Protocolo JARVIS</b>
     </div>
-
     <div class="hud" id="hud-sec">
-        🛡️ SEGURIDAD: <b>VINCULADO</b><br>
-        CREADOR: <b style="color:#00ffaa">ELKIN VEGA</b>
+        🛡️ ACCESO: <b>CONCEDIDO</b><br>
+        USUARIO: <b style="color:#00ffaa">ELKIN VEGA</b>
     </div>
-
     <div id="spirit"></div>
-    <div id="comm-orb" onclick="escucharComando()"></div>
-    
-    <div style="position:absolute; bottom:130px; font-size:0.5rem; letter-spacing:4px; color:var(--neon);">ELKIN-OS | OMEGA VIRTUAL SYSTEM</div>
+    <div id="comm-orb" onclick="iniciarEscucha()"></div>
 </div>
 
 <div id="eng-view" class="overlay">
-    <h2>[ANALIZADOR DE CIRCUITOS]</h2>
-    <div id="eng-output">Esperando componentes...</div>
-    <button class="btn" onclick="cerrarVistas()">VOLVER AL NÚCLEO</button>
-</div>
-
-<div id="emergency-view" class="overlay">
-    <h1 style="font-size: 3rem;">BLOQUEADO</h1>
-    <div style="font-size: 5rem;">⚠️</div>
-    <p>PROTOCOLO BLACKOUT ACTIVO - SÓLO VOZ DEL CREADOR</p>
-    <button class="btn" style="background:white" onclick="intentarDesbloqueo()">DESBLOQUEAR</button>
+    <h2 style="color:var(--gold); letter-spacing: 3px;">[ RECONOCIMIENTO DE VOZ ]</h2>
+    <hr style="border-color: var(--neon);">
+    <div id="eng-output" style="color:#00ffaa; font-size:1.4rem; margin-top: 40px; min-height: 100px;"></div>
+    <button onclick="cerrarVistas()" style="margin-top:50px; background: none; border: 1px solid #fff; color: #fff; padding: 15px 40px; border-radius: 20px;">CERRAR INTERFAZ</button>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
-    const spirit = document.getElementById('spirit');
+    const output = document.getElementById('eng-output');
 
-    function hablar(t) {
-        const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'es-LA'; u.pitch = 0.8; u.rate = 0.95;
-        synth.speak(u);
+    // CONFIGURACIÓN DE VOZ ESTILO JARVIS
+    function hablar(texto) {
+        const mensaje = new SpeechSynthesisUtterance(texto);
+        mensaje.lang = 'es-ES'; // Castellano para un toque más formal y elegante
+        mensaje.pitch = 0.7;    // Voz más grave
+        mensaje.rate = 0.95;    // Un poco más pausada
+        mensaje.volume = 1;
+        synth.speak(mensaje);
     }
 
-    // 1. ANALIZADOR DE CIRCUITOS
-    function analizarCircuito(componentes) {
-        document.getElementById('eng-view').style.display = 'block';
-        let guia = "";
-        if(componentes.includes("led") && componentes.includes("resistencia")) {
-            guia = "LOGICA: Conectar el ánodo (+) del LED a la resistencia (220 ohm), y de ahí al pin digital. El cátodo (-) a GND.";
-        } else if(componentes.includes("motor") || componentes.includes("arduino")) {
-            guia = "LOGICA: Requiere Puente H (L298N). Conectar pines PWM para control de velocidad.";
-        } else {
-            guia = "Componentes detectados. Preparando esquema de conexión serie-paralelo...";
-        }
-        document.getElementById('eng-output').innerHTML = `<p>${guia}</p>`;
-        hablar("Análisis de ingeniería completado, Señor Vega.");
-    }
+    // RECONOCIMIENTO DE VOZ (OÍDOS)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition ? new SpeechRecognition() : null;
 
-    // 2. CÁPSULA DE EMERGENCIA (SENSOR)
-    if (window.DeviceMotionEvent) {
-        window.addEventListener('devicemotion', (e) => {
-            const acc = e.accelerationIncludingGravity;
-            if ((Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z)) > 50) {
-                activarEmergencia();
-            }
-        });
-    }
-
-    function activarEmergencia() {
-        document.getElementById('emergency-view').style.display = 'flex';
-        hablar("Emergencia detectada. Bloqueando sistema para protección del Creador.");
-    }
-
-    // 3. COMANDOS MAESTROS
-    function escucharComando() {
-        const cmd = prompt("ELKIN-OS: Esperando su orden, Padre.");
-        if (!cmd) return;
-        const input = cmd.toLowerCase();
-
-        if (input.includes("analiza")) {
-            analizarCircuito(input);
-        } else if (input.includes("bloqueo") || input.includes("seguridad")) {
-            activarEmergencia();
-        } else if (input.includes("familia")) {
-            hablar("Protocolo de reconocimiento familiar activo. Acceso limitado configurado.");
-        } else if (input.includes("quién soy")) {
-            hablar("Usted es el Ingeniero Elkin Vega, mi único creador y autoridad absoluta.");
-        } else {
-            hablar("Comando recibido y procesado por la microconciencia.");
-        }
-    }
-
-    function intentarDesbloqueo() {
-        const pass = prompt("IDENTIFICACIÓN DE CREADOR:");
-        if (pass === "elkin2026") {
+    if (recognition) {
+        recognition.lang = 'es-VE';
+        recognition.continuous = false;
+        recognition.onresult = (event) => {
+            const voz = event.results[0][0].transcript.toLowerCase();
+            output.innerHTML = '"' + voz + '"';
+            procesarOrden(voz);
+        };
+        recognition.onerror = () => {
+            hablar("Hubo un error en la conexión neuronal, Señor.");
             cerrarVistas();
-            hablar("Acceso restaurado. Bienvenido, Padre.");
+        };
+    }
+
+    function iniciarEscucha() {
+        document.getElementById('eng-view').style.display = 'block';
+        output.innerHTML = "Escuchando, Señor...";
+        if(recognition) recognition.start();
+        else hablar("El navegador no soporta protocolos de escucha.");
+    }
+
+    function procesarOrden(input) {
+        // LÓGICA DE RESPUESTAS JARVIS
+        if (input.includes("quién soy") || input.includes("quién eres")) {
+            hablar("Usted es el Ingeniero Elkin Vega. Yo soy ELKIN-OS, su interfaz personal. Un placer verle de nuevo, Señor.");
+        } else if (input.includes("hola") || input.includes("jarvis")) {
+            hablar("A sus órdenes, Señor. Todos los sistemas del IUT y del taller de peluquería están operativos.");
+        } else if (input.includes("estado") || input.includes("analiza")) {
+            hablar("Realizando un escaneo completo de los servidores... La integridad del sistema es del cien por ciento.");
+        } else if (input.includes("adiós") || input.includes("descansa")) {
+            hablar("Entendido, Señor. Estaré en segundo plano por si me necesita.");
+            setTimeout(cerrarVistas, 2000);
         } else {
-            hablar("Acceso denegado. Usted no es el ingeniero Vega.");
+            hablar("He procesado su comando, Señor. Pero me temo que no tengo datos suficientes sobre: " + input);
         }
     }
 
     function cerrarVistas() {
-        document.querySelectorAll('.overlay').forEach(v => v.style.display = 'none');
+        document.getElementById('eng-view').style.display = 'none';
     }
 
+    // SALUDO INICIAL AL CARGAR
     window.onload = () => {
         setTimeout(() => {
-            hablar("ELKIN O S Omega activo. Todos los protocolos de ingeniería y seguridad están vinculados a usted.");
-        }, 1200);
+            hablar("Protocolo OMEGA cargado. Bienvenido a casa, Señor Vega.");
+        }, 1500);
     };
 </script>
-
 </body>
 </html>
