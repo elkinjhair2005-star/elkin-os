@@ -3,96 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS OMEGA</title>
+    <title>ELKIN-OS | OMEGA FINAL</title>
     <style>
-        :root { --stark-gold: #ffcc00; --stark-inner: rgba(255, 204, 0, 0.2); }
-        body { background: #000; color: #00d4ff; font-family: 'Helvetica', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --gold: #ffd700; --glow: rgba(255, 215, 0, 0.6); --interface: #00d4ff; }
+        body { background: #000; color: #fff; font-family: 'Helvetica Neue', Arial; margin: 0; overflow: hidden; height: 100vh; }
 
-        /* HUD SUPERIOR (Igual a tu imagen 6038) */
-        .hud-top { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 2px; }
+        /* HUD SUPERIOR */
+        #hud-header { position: absolute; top: 15px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 2px; font-weight: bold; box-sizing: border-box; }
+        .stark-txt { color: var(--gold); }
+
+        /* EL NÚCLEO QUE SÍ SE VA A VER (VECTORIAL) */
+        .main-container { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        /* EL NÚCLEO QUE SÍ SE VA A VER */
-        .viewport { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        #nucleus-container {
-            width: 250px; height: 250px;
-            display: flex; align-items: center; justify-content: center;
+        #stark-core {
+            width: 220px; height: 220px;
             position: relative;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Esfera de datos Stark */
-        .sphere {
-            position: absolute;
-            width: 100%; height: 100%;
-            border: 2px solid var(--stark-gold);
+        /* Capas de la Esfera */
+        .sphere-layer {
+            position: absolute; border-radius: 50%;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 30px var(--glow), inset 0 0 20px var(--glow);
+            animation: pulse-stark 2s infinite ease-in-out;
+        }
+        .layer-1 { width: 100%; height: 100%; opacity: 0.8; }
+        .layer-2 { 
+            width: 110%; height: 110%; border: 1px dashed var(--gold); 
+            opacity: 0.4; animation: rotate-core 15s linear infinite; 
+        }
+
+        /* El brillo interno */
+        .inner-light {
+            width: 60px; height: 60px;
+            background: var(--gold);
             border-radius: 50%;
-            box-shadow: 0 0 40px var(--stark-gold), inset 0 0 20px var(--stark-gold);
-            animation: pulse 2s infinite ease-in-out;
+            filter: blur(25px);
+            animation: flicker 0.1s infinite;
         }
 
-        .ring {
-            position: absolute;
-            width: 110%; height: 110%;
-            border: 1px dashed var(--stark-gold);
-            border-radius: 50%;
-            animation: rotate 10s linear infinite;
-            opacity: 0.5;
+        @keyframes pulse-stark {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.08); opacity: 1; }
         }
+        @keyframes rotate-core { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes flicker { 0% { opacity: 0.8; } 100% { opacity: 1; } }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* TERMINAL INFERIOR (Igual a tu imagen 6039) */
-        #diag-box {
-            position: absolute; bottom: 30px; width: 90%; left: 5%;
-            border: 1px solid #00d4ff; background: rgba(0,0,0,0.8);
-            padding: 10px; font-size: 0.55rem; border-radius: 5px;
-            color: #00d4ff; line-height: 1.4;
+        /* TERMINAL DE DIAGNÓSTICO (ESTILO IMAGEN 6040) */
+        #terminal-box {
+            position: absolute; bottom: 40px; width: 90%; left: 5%;
+            border: 1px solid var(--interface); background: rgba(0,20,30,0.8);
+            padding: 15px; font-family: monospace; font-size: 0.6rem; border-radius: 4px;
+            box-sizing: border-box; color: var(--interface);
         }
     </style>
 </head>
 <body>
 
-<div class="hud-top">
-    <div>SYSTEM: ELKIN-OS OMEGA V4.0<br>USER: ELKIN VEGA</div>
-    <div style="text-align:right">STATUS: ALPHA-LEVEL<br>CORE: HOLOGRAPHIC</div>
+<div id="hud-header">
+    <div>SYSTEM: <span class="stark-txt">ELKIN-OS OMEGA V4.0</span><br>USER: <span style="color:#fff">ELKIN VEGA</span></div>
+    <div style="text-align:right">STATUS: <span style="color:#00ffaa">NIVEL MÁXIMO</span><br>CORE: <span class="stark-txt">HOLOGRÁFICO ACTIVO</span></div>
 </div>
 
-<div class="viewport">
-    <div id="nucleus-container" onclick="activarVoz()">
-        <div class="sphere"></div>
-        <div class="ring"></div>
-        <div style="z-index:10; font-weight:bold; letter-spacing:5px; color:#fff; text-shadow:0 0 10px var(--stark-gold);">ELKIN-OS</div>
+<div class="main-container">
+    <div id="stark-core" onclick="ejecutarVoz()">
+        <div class="sphere-layer layer-1"></div>
+        <div class="sphere-layer layer-2"></div>
+        <div class="inner-light"></div>
+        <div style="z-index:20; font-weight:bold; letter-spacing:4px; font-size:0.8rem; text-shadow: 0 0 10px #000;">ELKIN-OS</div>
     </div>
 </div>
 
-<div id="diag-box">
-    > PROCESADOR HOLOGRÁFICO 3D RE-INICIALIZADO.<br>
-    > OPTIMIZACIÓN DE GPU PARA IPHONE... OK.<br>
-    > <span style="color:var(--stark-gold)">MODO JARVIS ACTIVO. ESPERANDO ÓRDENES.</span>
+<div id="terminal-box">
+    > INYECTANDO CÓDIGO DE RENDERIZADO VECTORIAL... <span style="color:#fff">HECHO</span><br>
+    > SINCRONIZANDO NÚCLEO DORADO CON GPU... <span style="color:#fff">OK</span><br>
+    > <span class="stark-txt">SISTEMA JARVIS LISTO PARA EL COMANDANTE VEGA.</span>
 </div>
 
 <script>
-    const synth = window.speechSynthesis;
-    function hablar(txt) {
-        synth.cancel();
-        const m = new SpeechSynthesisUtterance(txt);
-        m.lang = 'es-MX'; // Voz Siri Masculina
-        m.pitch = 0.9;
-        synth.speak(m);
+    const s = window.speechSynthesis;
+    function hablar(t) {
+        s.cancel();
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'es-MX'; // Voz masculina fluida
+        m.rate = 1.0; m.pitch = 0.85;
+        s.speak(m);
     }
 
-    function activarVoz() {
-        hablar("Protocolo restablecido, Comandante Vega. El núcleo está operativo al cien por ciento.");
-        document.querySelector('.sphere').style.borderColor = "#00ffaa";
+    function ejecutarVoz() {
+        hablar("Sistemas operativos al cien por ciento. Dígame, Señor Vega, ¿qué indagaremos hoy?");
+        document.querySelector('.inner-light').style.background = "#00ffaa";
     }
 
     window.onload = () => {
-        setTimeout(() => { hablar("Sistemas en línea. Bienvenido de nuevo."); }, 500);
+        setTimeout(() => { hablar("Sincronización completa. ELKIN-OS en línea."); }, 800);
     };
 </script>
 </body>
