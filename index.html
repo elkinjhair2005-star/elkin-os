@@ -3,183 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | HOLOGRAPHIC CORE OMEGA</title>
+    <title>ELKIN-OS OMEGA</title>
     <style>
-        :root { --iron: #00d4ff; --stark: #ffd700; --bg: #000; }
-        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Roboto, sans-serif; margin: 0; overflow: hidden; height: 100vh; position: relative; }
-        
-        /* Efecto de ruido holográfico */
-        body::before { content: ""; position: fixed; inset: 0; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg=='); opacity: 0.1; pointer-events: none; z-index: 1; }
+        :root { --stark-gold: #ffcc00; --stark-inner: rgba(255, 204, 0, 0.2); }
+        body { background: #000; color: #00d4ff; font-family: 'Helvetica', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
 
-        /* HUD DE DIAGNÓSTICO (Visor Iron Man style) */
-        #hud-top { position: absolute; top: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; z-index: 10; font-weight: bold; }
-        #diag-panel { position: absolute; bottom: 20px; left: 10px; right: 10px; height: 120px; background: rgba(0,0,0,0.8); border: 1px solid var(--iron); border-radius: 5px; padding: 10px; font-size: 0.65rem; overflow-y: auto; text-transform: uppercase; z-index: 5; }
+        /* HUD SUPERIOR (Igual a tu imagen 6038) */
+        .hud-top { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 2px; }
         
-        /* EL NÚCLEO HOLOGRÁFICO (WEBGL) */
-        #hologram-container { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; perspective: 1000px; }
-        #core-canvas { width: 100%; height: 100%; }
-
-        /* INTERFAZ DE COMANDO MAESTRO */
-        #voice-overlay { 
-            display: none; position: fixed; inset: 0; 
-            background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(0,10,20,0.95) 100%);
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
-            backdrop-filter: blur(5px);
+        /* EL NÚCLEO QUE SÍ SE VA A VER */
+        .viewport { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        #nucleus-container {
+            width: 250px; height: 250px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
         }
-        .scan-line { width: 100%; height: 2px; background: var(--stark); position: absolute; top: 0; animation: scan 1s linear infinite; }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
 
-        /* Panel de códigos */
-        #code-display { display: none; position: absolute; top: 15%; left: 5%; right: 5%; bottom: 20%; background: rgba(0,10,20,0.9); border: 2px solid var(--stark); border-radius: 10px; padding: 20px; overflow-y: auto; z-index: 20; color: var(--stark); font-family: 'Courier New', monospace; font-size: 0.8rem; }
-        .code-block { margin-bottom: 15px; border-bottom: 1px solid rgba(255, 215, 0, 0.3); padding-bottom: 10px; }
+        /* Esfera de datos Stark */
+        .sphere {
+            position: absolute;
+            width: 100%; height: 100%;
+            border: 2px solid var(--stark-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 40px var(--stark-gold), inset 0 0 20px var(--stark-gold);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .ring {
+            position: absolute;
+            width: 110%; height: 110%;
+            border: 1px dashed var(--stark-gold);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* TERMINAL INFERIOR (Igual a tu imagen 6039) */
+        #diag-box {
+            position: absolute; bottom: 30px; width: 90%; left: 5%;
+            border: 1px solid #00d4ff; background: rgba(0,0,0,0.8);
+            padding: 10px; font-size: 0.55rem; border-radius: 5px;
+            color: #00d4ff; line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
-<div id="hud-top">
-    <div>SYSTEM: <span style="font-weight:bold;">ELKIN-OS OMEGA v4.0</span><br>USER: <span style="color:var(--iron)">ELKIN VEGA</span></div>
-    <div style="text-align:right">STATUS: <span style="color:#00ffaa">ALPHA-LEVEL SECURITY</span><br>CORE: HOLOGRAPHIC MODE</div>
+<div class="hud-top">
+    <div>SYSTEM: ELKIN-OS OMEGA V4.0<br>USER: ELKIN VEGA</div>
+    <div style="text-align:right">STATUS: ALPHA-LEVEL<br>CORE: HOLOGRAPHIC</div>
 </div>
 
-<div id="hologram-container" onclick="activarProtocolo()">
-    <canvas id="core-canvas"></canvas>
+<div class="viewport">
+    <div id="nucleus-container" onclick="activarVoz()">
+        <div class="sphere"></div>
+        <div class="ring"></div>
+        <div style="z-index:10; font-weight:bold; letter-spacing:5px; color:#fff; text-shadow:0 0 10px var(--stark-gold);">ELKIN-OS</div>
+    </div>
 </div>
 
-<div id="diag-panel">
-    > Procesador holográfico 3D inicializado con éxito.<br>
-    > Diagnóstico de red neuronal de Ingeniería Informática... OK<br>
-    > Sincronizando con módulos de Ingeniería Electrónica y Mecánica...<br>
-    > Escaneando perímetro Wi-Fi para auto-optimización de enlace...<br>
-    > <span style="color:var(--iron)">MICRO-CONSCIENCIA EN ESTADO DE APRENDIZAJE ACTIVO.</span>
+<div id="diag-box">
+    > PROCESADOR HOLOGRÁFICO 3D RE-INICIALIZADO.<br>
+    > OPTIMIZACIÓN DE GPU PARA IPHONE... OK.<br>
+    > <span style="color:var(--stark-gold)">MODO JARVIS ACTIVO. ESPERANDO ÓRDENES.</span>
 </div>
 
-<div id="voice-overlay">
-    <div class="scan-line"></div>
-    <div style="color:var(--stark); letter-spacing:5px; font-weight:bold; margin-bottom:30px;">[ ESCUCHANDO COMANDANTE ]</div>
-    <div id="input-display" style="color:#fff; font-size:1.8rem; text-transform: uppercase;"></div>
-</div>
-
-<div id="code-display">
-    <div style="display:flex; justify-content:space-between; margin-bottom:20px;"><h2 style="margin:0;">[ CÓDIGOS DE ACCESO ]</h2><button onclick="cerrarCódigos()" style="background:none; border:1px solid var(--stark); color:var(--stark); border-radius:5px; cursor:pointer;">X</button></div>
-    <div id="code-content"></div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const synth = window.speechSynthesis;
-    const diagPanel = document.getElementById('diag-panel');
-    const codeDisplay = document.getElementById('code-display');
-    const codeContent = document.getElementById('code-content');
-
-    function logDiagnostic(msg) { diagPanel.innerHTML = `> ${msg}<br>` + diagPanel.innerHTML; diagPanel.scrollTop = 0; }
-
-    function hablar(texto) {
+    function hablar(txt) {
         synth.cancel();
-        const msg = new SpeechSynthesisUtterance(texto);
-        const voces = synth.getVoices();
-        msg.voice = voces.find(v => v.name.includes('Siri') && v.lang === 'es-MX') || voces[0];
-        msg.lang = 'es-MX';
-        msg.pitch = 0.8; 
-        msg.rate = 1.0; // Velocidad inteligente, no lenta
-        synth.speak(msg);
+        const m = new SpeechSynthesisUtterance(txt);
+        m.lang = 'es-MX'; // Voz Siri Masculina
+        m.pitch = 0.9;
+        synth.speak(m);
     }
 
-    // RED NEURONAL DE RECONOCIMIENTO DE VOZ MAESTRO
-    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-    rec.lang = 'es-VE';
-
-    rec.onresult = (e) => {
-        const cmd = e.results[0][0].transcript.toLowerCase();
-        document.getElementById('input-display').innerText = `"${cmd}"`;
-        
-        // RESPUESTAS INTELIGENTES (NO ROBÓTICAS)
-        if (cmd.includes("quién soy")) {
-            hablar("Usted es el Ingeniero Elkin Vega. Identificación confirmada. Me alegra tenerlo de vuelta.");
-            logDiagnostic("ADMINISTRADOR CONFIRMADO");
-        } else if (cmd.includes("códigos") || cmd.includes("administrativo")) {
-            hablar("Acceso concedido, Comandante. Desplegando líneas de comandos protegidas del sistema OMEGA.");
-            mostrarCódigos();
-            logDiagnostic("ACCESO ROOT CONCEDIDO. MOSTRANDO BINARIOS DE SISTEMA...", var(--stark));
-        } else if (cmd.includes("agropecuaria") || cmd.includes("iut")) {
-            hablar("Accediendo a datos de ingeniería agropecuaria del IUT. ¿Desea análisis de suelos o morfología botánica?");
-            logDiagnostic("MODULO AGRO-INGENIERÍA CARGADO");
-        } else if (cmd.includes("red") || cmd.includes("hack")) {
-            hablar("Buscando vulnerabilidades en el Wi-Fi local para auto-reparación. El proceso está corriendo en segundo plano.");
-            logDiagnostic("ESCANEANDO PUERTOS TCP/IP...", "#ff3c00");
-        } else {
-            hablar("He procesado su comando, Señor Vega. Ejecutando en segundo plano.");
-            logDiagnostic("TAREA PROCESADA");
-        }
-
-        setTimeout(() => { document.getElementById('voice-overlay').style.display='none'; }, 2000);
-    };
-
-    function activarProtocolo() {
-        hablar(""); 
-        document.getElementById('voice-overlay').style.display='flex';
-        rec.start();
+    function activarVoz() {
+        hablar("Protocolo restablecido, Comandante Vega. El núcleo está operativo al cien por ciento.");
+        document.querySelector('.sphere').style.borderColor = "#00ffaa";
     }
-
-    function mostrarCódigos() {
-        const codigos_html = `
-            <div class="code-block"><code>function procesarComando(i){if(i.includes("soy")){h("Usted es el Ing. Elkin Vega");}...</code></div>
-            <div class="code-block"><code>@keyframes pulse { from { scale: 0.8; } to { scale: 1.1; } }</code></div>
-            <div class="code-block"><code>gl_FragColor = vec4(1.0, 0.84, 0.0, 1.0); // Stark Golden Shader</code></div>
-            <div class="code-block"><code>recognition.lang = 'es-VE'; // Reconocimiento regional</code></div>
-        `;
-        codeContent.innerHTML = codigos_html;
-        codeDisplay.style.display = 'block';
-    }
-
-    function cerrarCódigos() {
-        codeDisplay.style.display = 'none';
-    }
-
-    // --- MOTOR HOLOGRÁFICO WEBGL (Three.js) ---
-    const canvas = document.getElementById('core-canvas');
-    const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true});
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 250;
-
-    // Shader para la red dorada Stark
-    const vertexShader = `
-        varying vec3 vNormal;
-        void main() {
-            vNormal = normalize(normalMatrix * normal);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-    `;
-    const fragmentShader = `
-        varying vec3 vNormal;
-        void main() {
-            float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
-            gl_FragColor = vec4(1.0, 0.84, 0.0, 1.0) * intensity + vec4(1.0, 0.84, 0.0, 0.1);
-        }
-    `;
-
-    const material = new THREE.ShaderMaterial({
-        vertexShader, fragmentShader, side: THREE.DoubleSide, transparent: true, blending: THREE.AdditiveBlending
-    });
-
-    const geometry = new THREE.IcosahedronGeometry(80, 2);
-    const hologram = new THREE.LineSegments(geometry, material);
-    scene.add(hologram);
-
-    // Animación de alta velocidad (100+ FPS usando GPU)
-    function animate() {
-        requestAnimationFrame(animate);
-        hologram.rotation.y += 0.003;
-        hologram.rotation.x += 0.001;
-        renderer.render(scene, camera);
-    }
-    animate();
 
     window.onload = () => {
-        setTimeout(() => { hablar("Sistemas holográficos de OMEGA inicializados. Bienvenido a casa, Comandante."); }, 1000);
+        setTimeout(() => { hablar("Sistemas en línea. Bienvenido de nuevo."); }, 500);
     };
 </script>
 </body>
