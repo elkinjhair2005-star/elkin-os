@@ -1,31 +1,30 @@
-<script>
-    // Úsalo dentro de tu etiqueta <script> actual
-    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-    rec.lang = 'es-VE'; // Tu acento, Elkin
-    rec.continuous = false;
-    rec.interimResults = false;
+const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+rec.lang = 'es-VE'; 
+rec.continuous = false; // Lo mantenemos en false para forzar el reinicio manual y evitar bloqueos
+rec.interimResults = false;
 
-    rec.onstart = () => {
-        // Efecto visual de que JARVIS te está oyendo
-        document.getElementById('nucleus-svg').style.filter = "drop-shadow(0 0 30px #00ffaa)";
-        console.log("Escuchando...");
-    };
+// Esta es la clave: Cuando el micrófono se detenga, que se active solo otra vez
+rec.onend = () => {
+    console.log("Reiniciando sensores de audio...");
+    rec.start(); 
+};
 
-    rec.onresult = (event) => {
-        const comando = event.results[0][0].transcript.toLowerCase();
-        document.querySelector('.terminal').innerHTML = "> COMANDO RECIBIDO: " + comando;
-        
-        if(comando.includes("hola") || comando.includes("elkin")) {
-            hablar("A sus órdenes, Señor Vega. El sistema está totalmente operativo.");
-        } else if(comando.includes("agro")) {
-            hablar("Accediendo a los archivos de Ingeniería Agropecuaria del I.U.T.");
-        } else {
-            hablar("He procesado su solicitud, Comandante.");
-        }
-    };
-
-    function hablarProtocolo() {
-        hablar("Activando sensores de audio.");
-        rec.start(); // Esto arranca el micrófono
+rec.onresult = (event) => {
+    const comando = event.results[0][0].transcript.toLowerCase();
+    
+    // Si detecta tu nombre, responde con más autoridad
+    if(comando.includes("elkin") || comando.includes("jarvis")) {
+        hablar("Dígame, Señor Vega. Estoy procesando su frecuencia.");
+        // Aquí puedes meter la lógica para abrir Instagram o buscar lo de Agropecuaria
     }
-</script>
+    
+    document.querySelector('.footer-terminal').innerHTML = "> COMANDO DETECTADO: " + comando;
+};
+
+// Función de ignición (Sigue siendo necesario el primer toque por seguridad de Apple)
+function activar() {
+    hablar("Protocolo de escucha continua activado. El sistema no dormirá, Comandante.");
+    rec.start();
+    // Cambiamos el color del núcleo a Cyan para indicar que el micro está abierto
+    document.querySelector('.stark-sphere').style.borderColor = "#00d4ff";
+}
