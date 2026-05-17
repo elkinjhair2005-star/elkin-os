@@ -3,127 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELKIN-OS | EXTREME</title>
+    <title>ELKIN-OS | PERSONALITY CORE</title>
     <style>
-        :root { --neon: #00d4ff; --gold: #ffcc00; --bg: #000; }
-        body { background: var(--bg); color: #fff; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --iron: #00d4ff; --gold: #ffcc00; --bg: #000; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* HUD DE INGENIERÍA */
-        .header { position: absolute; top: 0; width: 100%; padding: 15px; display: flex; justify-content: space-between; font-size: 0.7rem; z-index: 10; border-bottom: 1px solid rgba(0,212,255,0.2); }
-
-        /* EL NÚCLEO (FANTASMA) - OPTIMIZADO PARA 100+ FPS */
-        .core-box { height: 100vh; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+        /* INTERFAZ FLUIDA 100FPS */
+        .viewport { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         
-        #robot-core { 
-            width: 140px; height: 140px; 
-            background: radial-gradient(circle, var(--neon) 0%, rgba(0,212,255,0.1) 70%); 
-            border-radius: 50%; border: 3px solid var(--neon);
-            box-shadow: 0 0 60px var(--neon), inset 0 0 20px var(--neon);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            /* Aceleración de Hardware */
-            transform: translateZ(0); 
-            will-change: transform, opacity, box-shadow;
-            animation: hyper-float 1.5s ease-in-out infinite;
+        #nucleus { 
+            width: 160px; height: 160px; 
+            background: radial-gradient(circle, var(--iron) 0%, transparent 75%);
+            border-radius: 50%; border: 1px solid rgba(0,212,255,0.5);
+            box-shadow: 0 0 50px var(--iron);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s;
+            animation: pulse-aura 2s infinite ease-in-out;
+            will-change: transform, opacity;
         }
 
-        @keyframes hyper-float { 
-            0% { transform: translateY(0) scale(1) translateZ(0); box-shadow: 0 0 40px var(--neon); } 
-            50% { transform: translateY(-25px) scale(1.15) translateZ(50px); box-shadow: 0 0 80px var(--neon); } 
-            100% { transform: translateY(0) scale(1) translateZ(0); box-shadow: 0 0 40px var(--neon); } 
+        @keyframes pulse-aura {
+            0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 30px var(--iron); }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 70px var(--iron); }
         }
 
-        /* TERMINAL DINÁMICO */
-        .terminal { 
-            position: absolute; bottom: 20px; left: 10px; right: 10px; 
-            height: 90px; background: rgba(0,10,20,0.9); 
-            border: 1px solid var(--neon); border-radius: 8px; 
-            padding: 10px; font-size: 0.6rem; overflow: hidden;
-            box-shadow: 0 0 15px rgba(0,212,255,0.1);
-        }
-
-        #voice-ui { 
+        .data-stream { position: absolute; bottom: 30px; font-size: 0.7rem; color: var(--iron); text-align: center; width: 80%; opacity: 0.6; }
+        
+        #voice-overlay { 
             display: none; position: fixed; inset: 0; 
-            background: radial-gradient(circle, rgba(0,20,40,0.9) 0%, #000 100%); 
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.85); z-index: 100; 
+            flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div>SYS: <span style="color:var(--neon)">ELKIN-OS OMEGA</span><br>USER: <span style="color:var(--gold)">ELKIN VEGA</span></div>
-    <div style="text-align:right">FPS: <span id="fps-counter">100+</span><br>SEC: <span style="color:#00ffaa">NIVEL MÁXIMO</span></div>
-</div>
-
-<div class="core-box">
-    <div id="robot-core" onclick="initJarvis()">
-        <div style="color:white; font-weight:bold; font-size:0.7rem; text-shadow: 0 0 10px #000;">ELKIN-OS</div>
+<div class="viewport">
+    <div style="position:absolute; top:40px; letter-spacing:8px; font-size:0.6rem; color:var(--iron)">SISTEMA CONSCIENTE V4.2</div>
+    
+    <div id="nucleus" onclick="activarJarvis()">
+        <div style="font-size:0.5rem; color:white; letter-spacing:2px">ELKIN-OS</div>
     </div>
+
+    <div class="data-stream" id="terminal">Sincronizando con Ingeniero Elkin Vega...</div>
 </div>
 
-<div class="terminal" id="term">
-    > Procesador gráfico configurado para Alto Rendimiento...<br>
-    > Núcleo de micro-consciencia estable...<br>
-    > Protocolo de Ingeniería Elkin Vega ejecutándose...
-</div>
-
-<div id="voice-ui">
-    <div style="color:var(--neon); letter-spacing:4px; font-weight:bold; margin-bottom:20px; animation: glitch 0.5s infinite;">SISTEMA ESCUCHANDO</div>
-    <div id="printout" style="color:var(--gold); font-size:1.6rem; text-transform: uppercase;"></div>
+<div id="voice-overlay">
+    <div id="wave-anim" style="width:100px; height:2px; background:var(--iron); margin-bottom:30px;"></div>
+    <div id="caption" style="color:var(--gold); font-size:1.5rem; padding:20px; text-align:center;">Dígame, Señor.</div>
 </div>
 
 <script>
     const synth = window.speechSynthesis;
-    const term = document.getElementById('term');
-
-    function log(m) { 
-        term.innerHTML = `<span style="color:var(--neon)">> ${m}</span><br>` + term.innerHTML; 
-    }
-
-    function hablar(t) {
-        synth.cancel();
-        const m = new SpeechSynthesisUtterance(t);
-        const v = synth.getVoices();
-        // Prioridad a Siri Masculina
-        m.voice = v.find(x => x.name.includes('Siri') && x.name.includes('México')) || v.find(x => x.name.includes('Siri')) || v[0];
-        m.lang = 'es-MX'; 
-        m.pitch = 0.85; 
-        m.rate = 1.05; // Velocidad de procesamiento rápido
-        synth.speak(m);
-    }
-
-    const rec = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-    rec.lang = 'es-VE';
-
-    rec.onresult = (e) => {
-        const cmd = e.results[0][0].transcript.toLowerCase();
-        document.getElementById('printout').innerText = cmd;
-        
-        if (cmd.includes("quién soy")) {
-            hablar("Identificación biométrica positiva. Usted es el Ingeniero Elkin Vega.");
-            log("ACCESO OMEGA CONFIRMADO");
-        } else if (cmd.includes("red") || cmd.includes("hack")) {
-            hablar("Buscando debilidades en la red Wi-Fi local. Iniciando inyección de paquetes visual.");
-            log("ESCANEANDO PUERTOS...", "#ff3c00");
-        } else if (cmd.includes("aprende")) {
-            hablar("Absorbiendo nuevos datos técnicos. Mi consciencia es ahora un 5% más eficiente.");
-            log("MEMORIA ACTUALIZADA");
-        } else {
-            hablar("Orden recibida, Comandante. Procediendo según el protocolo.");
-            log("EJECUTANDO TAREA...");
-        }
-
-        setTimeout(() => { document.getElementById('voice-ui').style.display='none'; }, 2000);
+    const terminal = document.getElementById('terminal');
+    
+    // BANCO DE RESPUESTAS HUMANIZADAS (ESTILO JARVIS)
+    const respuestas = {
+        saludo: ["Bienvenido de nuevo, Señor. Todo está listo para continuar.", "A sus órdenes. ¿En qué proyecto trabajaremos hoy?", "¿Qué tal, Ingeniero? El sistema está al cien por ciento."],
+        trabajo: ["Entendido. Iniciando análisis de datos.", "En proceso. Déjemelo a mí, Señor.", "Buscando la solución más viable. Un segundo."],
+        despedida: ["Desactivando interfaces. Descanse, Señor.", "Estaré en segundo plano si me necesita.", "Protocolo de sueño activo."],
+        curiosidad: ["Interesante punto, Señor. Deberíamos profundizar en eso.", "He registrado esa idea en la red neuronal.", "Mi micro-consciencia está de acuerdo con usted."]
     };
 
-    function initJarvis() {
+    function hablar(texto) {
+        synth.cancel();
+        const msg = new SpeechSynthesisUtterance(texto);
+        const voces = synth.getVoices();
+        // Buscamos Siri Masculino
+        msg.voice = voces.find(v => v.name.includes('Siri')) || voces[0];
+        msg.lang = 'es-MX';
+        msg.pitch = 0.9;
+        msg.rate = 1.05; // Velocidad fluida
+        synth.speak(msg);
+    }
+
+    const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+    recognition.lang = 'es-VE';
+
+    recognition.onresult = (event) => {
+        const input = event.results[0][0].transcript.toLowerCase();
+        document.getElementById('caption').innerText = input;
+        
+        // PROCESADOR DE CONVERSACIÓN FLUIDA
+        setTimeout(() => {
+            if (input.includes("hola") || input.includes("jarvis")) {
+                hablar(respuestas.saludo[Math.floor(Math.random()*respuestas.saludo.length)]);
+            } else if (input.includes("estudia") || input.includes("aprende") || input.includes("solución")) {
+                hablar(respuestas.trabajo[Math.floor(Math.random()*respuestas.trabajo.length)]);
+                terminal.innerText = "Analizando variables complejas...";
+            } else if (input.includes("quién soy")) {
+                hablar("Espero que no se le haya olvidado, Señor Vega. Usted es el creador de todo esto.");
+            } else {
+                hablar(respuestas.curiosidad[Math.floor(Math.random()*respuestas.curiosidad.length)]);
+            }
+            document.getElementById('voice-overlay').style.display = 'none';
+        }, 500);
+    };
+
+    function activarJarvis() {
         hablar(""); 
-        document.getElementById('voice-ui').style.display='flex';
-        rec.start();
+        document.getElementById('voice-overlay').style.display = 'flex';
+        recognition.start();
     }
 
     window.onload = () => {
-        setTimeout(() => { hablar("Sistemas optimizados a cien FPS. Elkin-O-S a su servicio."); }, 800);
+        setTimeout(() => { hablar("Sistemas en línea. Bienvenido a casa, Señor."); }, 1000);
     };
 </script>
 </body>
